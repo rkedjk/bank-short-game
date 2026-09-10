@@ -273,6 +273,7 @@ const elLessonActions = $("lesson-actions");
 const elQuizQuestions = $("quiz-questions");
 const elSbHint = $("sb-hint");
 const elSbLog = $("sb-log");
+const elThemeToggle = $("theme-toggle");
 
 // ---------- DOM-хелперы (без innerHTML) ----------
 function el<K extends keyof HTMLElementTagNameMap>(
@@ -872,6 +873,25 @@ function initSandbox(): void {
   });
 }
 
+// ---------- Переключение темы ----------
+function applyTheme(t: "light" | "dark"): void {
+  document.documentElement.dataset.theme = t;
+  try {
+    localStorage.setItem("tds-theme", t);
+  } catch {
+    /* localStorage недоступен — тема просто не сохранится */
+  }
+  elThemeToggle.textContent = t === "dark" ? "☀️" : "🌙";
+}
+
+function initTheme(): void {
+  const current = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+  elThemeToggle.textContent = current === "dark" ? "☀️" : "🌙";
+  elThemeToggle.addEventListener("click", () =>
+    applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"),
+  );
+}
+
 // ---------- Переключение вкладок ----------
 function switchMode(m: "scenario" | "sandbox"): void {
   mode = m;
@@ -904,6 +924,7 @@ elSlider.addEventListener("input", () => {
 renderPairSelect();
 setSliderRange();
 setRate(SCENARIOS[0].entry);
+initTheme();
 renderScenario();
 initSandbox();
 switchMode("scenario");

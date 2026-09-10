@@ -4,10 +4,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Банк в шорте — учебный симулятор</title>
+    <script>
+      // Применяем тему до первого кадра, чтобы не было «вспышки»
+      try {
+        var t =
+          localStorage.getItem("tds-theme") ||
+          (window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light");
+        document.documentElement.dataset.theme = t;
+      } catch (e) {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
     <header class="header">
+      <button
+        class="theme-toggle"
+        id="theme-toggle"
+        aria-label="Переключить тему"
+        title="Переключить тему"
+      ></button>
       <h1>🏦 Банк в шорте</h1>
       <p class="subtitle">
         Пойми, почему «курс вырос» — это убыток для банка, который продал валюту
