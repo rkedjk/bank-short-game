@@ -85,10 +85,8 @@ const SCENARIOS: Scenario[] = [
     texts: {
       intro:
         "У банка лежит **{amt} USD** клиента, который просит перевести их в йены. Банк уверен, что доллар скоро **подешевеет**, поэтому решает сыграть на этом: продать доллары сейчас по {entry} ¥ за доллар, а позже откупить их **дешевле** и заработать на разнице. Это называется **короткая позиция (шорт)**.",
-      wait:
-        "Банк продал доллары. Теперь **долларов у банка нет** — он их **должен** клиенту. Зато у банка {gain} ¥ от продажи. Банк ждёт, что курс **упадёт ниже {entry}** — тогда откупит доллары дешевле и заработает. Покрути ползунок: как только курс поднимается выше {entry} — убыток растёт (красный).",
-      rise:
-        "Курс вырос до **{exit}** — доллар подорожал, банк ошибся в расчётах. Клиент требует вернуть его **{amt} USD**: долларов у банка нет, их надо **купить** по текущему курсу {exit}. Сейчас {amt} USD стоит {cost} ¥ вместо {gain} ¥, полученных при продаже.",
+      wait: "Банк продал доллары. Теперь **долларов у банка нет** — он их **должен** клиенту. Зато у банка {gain} ¥ от продажи. Банк ждёт, что курс **упадёт ниже {entry}** — тогда откупит доллары дешевле и заработает. Покрути ползунок: как только курс поднимается выше {entry} — убыток растёт (красный).",
+      rise: "Курс вырос до **{exit}** — доллар подорожал, банк ошибся в расчётах. Клиент требует вернуть его **{amt} USD**: долларов у банка нет, их надо **купить** по текущему курсу {exit}. Сейчас {amt} USD стоит {cost} ¥ вместо {gain} ¥, полученных при продаже.",
       result:
         "Вот и прикол: банк продал доллары по **{entry}**, а откупать должен по **{exit}** — **дороже**. Разница и есть убыток.",
       analogy:
@@ -117,10 +115,8 @@ const SCENARIOS: Scenario[] = [
     texts: {
       intro:
         "Экспортёр принёс в банк **{amt} RUB** выручки и просит конвертировать их в доллары. Банк считает, что рубль скоро **укрепится** (станет дороже), и решает продать рубли сейчас по {entry} $ за рубль, а позже откупить их **дешевле** — **короткая позиция (шорт)** по рублю.",
-      wait:
-        "Рубли проданы: банк **должен их экспортёру**, зато у банка {gain} $ от продажи. Банк ждёт, что курс **упадёт ниже {entry}** — тогда откупит рубли дешевле и заработает. Покрути ползунок: рост курса выше {entry} — убыток (красный).",
-      rise:
-        "Курс вырос до **{exit}** — рубль подорожал, банк ошибся в расчётах. Экспортёр требует вернуть **{amt} RUB**: откупать рубли по {exit} $ вместо {entry}.",
+      wait: "Рубли проданы: банк **должен их экспортёру**, зато у банка {gain} $ от продажи. Банк ждёт, что курс **упадёт ниже {entry}** — тогда откупит рубли дешевле и заработает. Покрути ползунок: рост курса выше {entry} — убыток (красный).",
+      rise: "Курс вырос до **{exit}** — рубль подорожал, банк ошибся в расчётах. Экспортёр требует вернуть **{amt} RUB**: откупать рубли по {exit} $ вместо {entry}.",
       result:
         "Итог: банк продал рубли по **{entry}**, а откупать должен по **{exit}** — **дороже**. Разница и есть убыток.",
       analogy:
@@ -149,10 +145,8 @@ const SCENARIOS: Scenario[] = [
     texts: {
       intro:
         "Импортёр платит поставщику **{amt} USD** и просит банк продать его доллары за рубли. Банк ставит на **укрепление рубля**: продаёт доллары сейчас по {entry} ₽ за доллар, чтобы позже откупить их **дешевле** — **короткая позиция (шорт)** по доллару.",
-      wait:
-        "Доллары проданы: банк **должен их импортёру**. У банка {gain} ₽ от продажи. Банк ждёт курс **ниже {entry}** — тогда откупит доллары дешевле. Выше {entry} — убыток, проверь ползунком.",
-      rise:
-        "Курс вырос до **{exit}** — доллар подорожал, банк ошибся в расчётах. Импортёр требует вернуть **{amt} USD**: откупать доллары по {exit} ₽ вместо {entry}.",
+      wait: "Доллары проданы: банк **должен их импортёру**. У банка {gain} ₽ от продажи. Банк ждёт курс **ниже {entry}** — тогда откупит доллары дешевле. Выше {entry} — убыток, проверь ползунком.",
+      rise: "Курс вырос до **{exit}** — доллар подорожал, банк ошибся в расчётах. Импортёр требует вернуть **{amt} USD**: откупать доллары по {exit} ₽ вместо {entry}.",
       result:
         "Итог: банк продал доллары по **{entry}**, а откупать должен по **{exit}** — **дороже**. Разница и есть убыток.",
       analogy:
@@ -181,10 +175,8 @@ const SCENARIOS: Scenario[] = [
     texts: {
       intro:
         "Клиент-инвестор просит конвертировать **{amt} JPY** в доллары. Банк считает, что йена скоро **укрепится**, и продаёт йены сейчас по {entry} $ за йену, чтобы позже откупить их **дешевле** — **короткая позиция (шорт)** по йене.",
-      wait:
-        "Йены проданы: банк **должен их инвестору**. У банка {gain} $ от продажи. Банк ждёт курс **ниже {entry}** — тогда откупит йены дешевле и заработает. Выше {entry} — убыток, проверь ползунком.",
-      rise:
-        "Курс вырос до **{exit}** — йена подорожала, банк ошибся в расчётах. Инвестор требует вернуть **{amt} JPY**: откупать йены по {exit} $ вместо {entry}.",
+      wait: "Йены проданы: банк **должен их инвестору**. У банка {gain} $ от продажи. Банк ждёт курс **ниже {entry}** — тогда откупит йены дешевле и заработает. Выше {entry} — убыток, проверь ползунком.",
+      rise: "Курс вырос до **{exit}** — йена подорожала, банк ошибся в расчётах. Инвестор требует вернуть **{amt} JPY**: откупать йены по {exit} $ вместо {entry}.",
       result:
         "Итог: банк продал йены по **{entry}**, а откупать должен по **{exit}** — **дороже**. Разница и есть убыток.",
       analogy:
@@ -201,7 +193,8 @@ const SCENARIOS: Scenario[] = [
 // ---------- Расчёты сценария ----------
 const gainOf = (s: Scenario): number => Math.round(s.entry * s.amount);
 const costOf = (s: Scenario): number => Math.round(s.exit * s.amount);
-const lossOf = (s: Scenario): number => Math.round((s.exit - s.entry) * s.amount);
+const lossOf = (s: Scenario): number =>
+  Math.round((s.exit - s.entry) * s.amount);
 
 // Подстановка чисел в тексты-задачки: {entry} {exit} {amt} {gain} {cost} {loss} {base} {quote} {bSym} {qSym}
 function fill(t: string, s: Scenario): string {
@@ -217,7 +210,10 @@ function fill(t: string, s: Scenario): string {
     "{bSym}": s.baseSym,
     "{qSym}": s.quoteSym,
   };
-  return t.replace(/\{(entry|exit|amt|gain|cost|loss|base|quote|bSym|qSym)\}/g, (m) => rep[m]);
+  return t.replace(
+    /\{(entry|exit|amt|gain|cost|loss|base|quote|bSym|qSym)\}/g,
+    (m) => rep[m],
+  );
 }
 
 // ---------- Состояние ----------
@@ -243,7 +239,11 @@ const sandbox: Game = {
 
 let scenarioStep = 0; // 0 продажа · 1 движение · 2 рост/клиент · 3 разбор · 4 викторина
 let quizScore = 0;
-interface LogEntry { t: string; text: string; cls: "up" | "down" | "" }
+interface LogEntry {
+  t: string;
+  text: string;
+  cls: "up" | "down" | "";
+}
 const sandboxLog: LogEntry[] = [];
 
 // ---------- DOM ----------
@@ -328,7 +328,11 @@ function math(lines: Array<[string, "neg" | "pos" | "dim" | ""]>): void {
 function actions(...btns: HTMLButtonElement[]): void {
   elLessonActions.replaceChildren(...btns);
 }
-function btn(cls: string, text: string, onClick: () => void): HTMLButtonElement {
+function btn(
+  cls: string,
+  text: string,
+  onClick: () => void,
+): HTMLButtonElement {
   const b = document.createElement("button");
   b.className = `btn ${cls}`;
   b.textContent = text;
@@ -414,7 +418,11 @@ function renderBoard(): void {
   // Подсказка: для шортиста зелёный рост = плохо
   const baseName = CURRENCY_NAMES[s.base] ?? s.base;
   if (g.pos.side) {
-    const dirWord = up ? "курс растёт" : down ? "курс падает" : "курс без движения";
+    const dirWord = up
+      ? "курс растёт"
+      : down
+        ? "курс падает"
+        : "курс без движения";
     elRateNote.textContent =
       g.pos.side === "short"
         ? `Банк в ШОРТЕ: ${dirWord} → ${up ? "откупать дороже = ПЛОХО" : down ? "откупать дешевле = ХОРОШО" : ""}`
@@ -449,14 +457,20 @@ function renderBoard(): void {
         : "—";
 
   // Позиция
-  elPosSide.textContent = g.pos.side ? (g.pos.side === "short" ? "SHORT" : "LONG") : "—";
+  elPosSide.textContent = g.pos.side
+    ? g.pos.side === "short"
+      ? "SHORT"
+      : "LONG"
+    : "—";
   elPosSide.className = g.pos.side ?? "";
   elPosAmount.textContent = g.pos.side
     ? `${fmt(g.pos.amount)} ${s.base}`
     : g.lastClose
       ? "закрыто"
       : "нет сделок";
-  elPosEntry.textContent = g.pos.side ? `@ ${fmtRate(g.pos.entry, s.digits)}` : "";
+  elPosEntry.textContent = g.pos.side
+    ? `@ ${fmtRate(g.pos.entry, s.digits)}`
+    : "";
 
   // PnL
   const pnl = g.pos.side ? openPnl(g) : (g.lastClose?.pnl ?? 0);
@@ -476,7 +490,11 @@ function flashSwap(): void {
 function renderPairSelect(): void {
   elPairSelect.replaceChildren(
     ...SCENARIOS.map((s, i) => {
-      const b = el("button", `pair-btn${i === curIdx ? " active" : ""}`, s.pair);
+      const b = el(
+        "button",
+        `pair-btn${i === curIdx ? " active" : ""}`,
+        s.pair,
+      );
       b.addEventListener("click", () => selectScenario(i));
       return b;
     }),
@@ -510,17 +528,26 @@ function selectScenario(i: number): void {
   renderScenario();
   renderSandboxLog();
   elSbHint.textContent = `Двигай курс ползунком, открывай и закрывай позиции — и смотри, как меняется прибыль/убыток. Стартовый капитал: ${money(s.sandboxCapital, s.quoteSym)}.`;
-  $<HTMLButtonElement>("sb-short").textContent = `⬇️ Продать ${fmt(s.amount)} ${s.base} (шорт)`;
-  $<HTMLButtonElement>("sb-long").textContent = `⬆️ Купить ${fmt(s.amount)} ${s.base} (лонг)`;
+  $<HTMLButtonElement>("sb-short").textContent =
+    `⬇️ Продать ${fmt(s.amount)} ${s.base} (шорт)`;
+  $<HTMLButtonElement>("sb-long").textContent =
+    `⬆️ Купить ${fmt(s.amount)} ${s.base} (лонг)`;
 }
 
 // ---------- Сценарий ----------
-const SCENARIO_TITLES = ["Продажа", "Движение курса", "Рост курса", "Разбор", "Викторина"];
+const SCENARIO_TITLES = [
+  "Продажа",
+  "Движение курса",
+  "Рост курса",
+  "Разбор",
+  "Викторина",
+];
 
 function renderScenario(): void {
   elProgress.replaceChildren(
     ...SCENARIO_TITLES.map((t, i) => {
-      const cls = i < scenarioStep ? "done" : i === scenarioStep ? "active" : "";
+      const cls =
+        i < scenarioStep ? "done" : i === scenarioStep ? "active" : "";
       const dot = el("span", `step-dot ${cls}`, String(i + 1));
       dot.title = t;
       return dot;
@@ -528,11 +555,21 @@ function renderScenario(): void {
   );
 
   switch (scenarioStep) {
-    case 0: renderStep0(); break;
-    case 1: renderStep1(); break;
-    case 2: renderStep2(); break;
-    case 3: renderStep3(); break;
-    case 4: renderStep4(); break;
+    case 0:
+      renderStep0();
+      break;
+    case 1:
+      renderStep1();
+      break;
+    case 2:
+      renderStep2();
+      break;
+    case 3:
+      renderStep3();
+      break;
+    case 4:
+      renderStep4();
+      break;
   }
   elSlider.disabled = scenarioStep !== 1 && scenarioStep !== 2;
   renderBoard();
@@ -546,13 +583,17 @@ function renderStep0(): void {
     `💡 Курс сейчас: **${fmtRate(rate, s.digits)} ${s.quote} за 1 ${s.base}**. Продав ${fmt(s.amount)} ${s.base}, банк получит **${fmt(gainOf(s))} ${s.quote}**.`,
   );
   actions(
-    btn("btn-sell", `Продать ${fmt(s.amount)} ${s.base} за ${s.quote} по ${fmtRate(rate, s.digits)}`, () => {
-      setRate(s.entry); // фиксируем стартовый курс задачки
-      openTrade(scenario, "short");
-      flashSwap();
-      scenarioStep = 1;
-      renderScenario();
-    }),
+    btn(
+      "btn-sell",
+      `Продать ${fmt(s.amount)} ${s.base} за ${s.quote} по ${fmtRate(rate, s.digits)}`,
+      () => {
+        setRate(s.entry); // фиксируем стартовый курс задачки
+        openTrade(scenario, "short");
+        flashSwap();
+        scenarioStep = 1;
+        renderScenario();
+      },
+    ),
   );
 }
 
@@ -572,11 +613,15 @@ function renderStep1(): void {
     "bad",
   );
   actions(
-    btn("btn-primary", `📈 Курс вырос до ${fmtRate(s.exit, s.digits)} (как в задачке)`, () => {
-      setRate(s.exit);
-      scenarioStep = 2;
-      renderScenario();
-    }),
+    btn(
+      "btn-primary",
+      `📈 Курс вырос до ${fmtRate(s.exit, s.digits)} (как в задачке)`,
+      () => {
+        setRate(s.exit);
+        scenarioStep = 2;
+        renderScenario();
+      },
+    ),
   );
 }
 
@@ -589,16 +634,20 @@ function renderStep2(): void {
     `Вот и прикол: банк продал ${s.base} по **${fmtRate(s.entry, s.digits)}**, а откупать должен по **${fmtRate(rate, s.digits)}** — **дороже**. Разница и есть убыток.`,
   );
   actions(
-    btn("btn-buy", `Исполнить: купить ${fmt(s.amount)} ${s.base} и вернуть клиенту`, () => {
-      const pnl = closeTrade(scenario);
-      scenario.lastClose = {
-        pnl,
-        text: `${pnl < 0 ? "убыток" : "прибыль"} ${fmt(Math.abs(pnl))} ${s.quote}`,
-      };
-      flashSwap();
-      scenarioStep = 3;
-      renderScenario();
-    }),
+    btn(
+      "btn-buy",
+      `Исполнить: купить ${fmt(s.amount)} ${s.base} и вернуть клиенту`,
+      () => {
+        const pnl = closeTrade(scenario);
+        scenario.lastClose = {
+          pnl,
+          text: `${pnl < 0 ? "убыток" : "прибыль"} ${fmt(Math.abs(pnl))} ${s.quote}`,
+        };
+        flashSwap();
+        scenarioStep = 3;
+        renderScenario();
+      },
+    ),
   );
 }
 
@@ -606,12 +655,21 @@ function renderStep3(): void {
   const s = cur();
   lesson("Шаг 4. Итог");
   math([
-    [`Продал ${fmt(s.amount)} ${s.base} по ${fmtRate(s.entry, s.digits)}   → +${fmt(gainOf(s))} ${s.quote}`, ""],
-    [`Купил  ${fmt(s.amount)} ${s.base} по ${fmtRate(s.exit, s.digits)}   → −${fmt(costOf(s))} ${s.quote}`, ""],
+    [
+      `Продал ${fmt(s.amount)} ${s.base} по ${fmtRate(s.entry, s.digits)}   → +${fmt(gainOf(s))} ${s.quote}`,
+      "",
+    ],
+    [
+      `Купил  ${fmt(s.amount)} ${s.base} по ${fmtRate(s.exit, s.digits)}   → −${fmt(costOf(s))} ${s.quote}`,
+      "",
+    ],
     ["───────────────────────────────────────────────", "dim"],
     [`Итог:  −${fmt(lossOf(s))} ${s.quote}   (убыток банка)`, "neg"],
   ]);
-  key(`📉 **Банк потерял ${fmt(lossOf(s))} ${s.quote}.** Потому что продал ${s.base}, а когда понадобилось их вернуть — они уже стоили дороже.`, "bad");
+  key(
+    `📉 **Банк потерял ${fmt(lossOf(s))} ${s.quote}.** Потому что продал ${s.base}, а когда понадобилось их вернуть — они уже стоили дороже.`,
+    "bad",
+  );
   key(fill(s.texts.analogy, s));
   actions(
     btn("btn-primary", "✅ Перейти к проверке понимания", () => {
@@ -637,7 +695,8 @@ interface Q {
 
 function makeQuiz(s: Scenario): Q[] {
   const loss = lossOf(s);
-  const alt = Math.round((s.entry * 2 - s.exit) * 10 ** s.digits) / 10 ** s.digits;
+  const alt =
+    Math.round((s.entry * 2 - s.exit) * 10 ** s.digits) / 10 ** s.digits;
   return [
     {
       text: fill(s.texts.quiz[0], s),
@@ -651,7 +710,10 @@ function makeQuiz(s: Scenario): Q[] {
     {
       text: fill(s.texts.quiz[1], s),
       options: [
-        { label: `Потому что у банка больше нет ${s.base}: их нужно покупать обратно дороже`, right: true },
+        {
+          label: `Потому что у банка больше нет ${s.base}: их нужно покупать обратно дороже`,
+          right: true,
+        },
         { label: `Потому что ${s.quote} подешевела`, right: false },
         { label: "Потому что клиент может расстроиться", right: false },
       ],
@@ -696,7 +758,9 @@ function renderQuiz(): void {
           btns[j].disabled = true;
         }
         if (o.right) quizScore++;
-        expl.textContent = o.right ? "✅ Верно! " + q.expl : "❌ Нет. " + q.expl;
+        expl.textContent = o.right
+          ? "✅ Верно! " + q.expl
+          : "❌ Нет. " + q.expl;
         updateQuizScore();
       });
       btns.push(b);
@@ -706,7 +770,9 @@ function renderQuiz(): void {
     elQuizQuestions.appendChild(box);
   }
 
-  elQuizQuestions.appendChild(btn("btn-primary", "🔄 Пройти сценарий заново", resetScenario));
+  elQuizQuestions.appendChild(
+    btn("btn-primary", "🔄 Пройти сценарий заново", resetScenario),
+  );
 }
 
 function updateQuizScore(): void {
@@ -763,7 +829,9 @@ function initSandbox(): void {
     } else {
       openTrade(sandbox, "short");
       flashSwap();
-      logEntry(`📌 Открыт SHORT ${fmt(sandbox.pos.amount)} ${cur().base} @ ${fmtRate(sandbox.pos.entry, cur().digits)}`);
+      logEntry(
+        `📌 Открыт SHORT ${fmt(sandbox.pos.amount)} ${cur().base} @ ${fmtRate(sandbox.pos.entry, cur().digits)}`,
+      );
     }
     renderSandboxLog();
     renderBoard();
@@ -775,7 +843,9 @@ function initSandbox(): void {
     } else {
       openTrade(sandbox, "long");
       flashSwap();
-      logEntry(`📌 Открыт LONG ${fmt(sandbox.pos.amount)} ${cur().base} @ ${fmtRate(sandbox.pos.entry, cur().digits)}`);
+      logEntry(
+        `📌 Открыт LONG ${fmt(sandbox.pos.amount)} ${cur().base} @ ${fmtRate(sandbox.pos.entry, cur().digits)}`,
+      );
     }
     renderSandboxLog();
     renderBoard();
@@ -815,7 +885,8 @@ function switchMode(m: "scenario" | "sandbox"): void {
   } else {
     elQuiz.classList.add("hidden");
   }
-  elSlider.disabled = m === "scenario" && scenarioStep !== 1 && scenarioStep !== 2;
+  elSlider.disabled =
+    m === "scenario" && scenarioStep !== 1 && scenarioStep !== 2;
   renderBoard();
 }
 
@@ -838,5 +909,7 @@ initSandbox();
 switchMode("scenario");
 renderSandboxLog();
 elSbHint.textContent = `Двигай курс ползунком, открывай и закрывай позиции — и смотри, как меняется прибыль/убыток. Стартовый капитал: ${money(cur().sandboxCapital, cur().quoteSym)}.`;
-$<HTMLButtonElement>("sb-short").textContent = `⬇️ Продать ${fmt(cur().amount)} ${cur().base} (шорт)`;
-$<HTMLButtonElement>("sb-long").textContent = `⬆️ Купить ${fmt(cur().amount)} ${cur().base} (лонг)`;
+$<HTMLButtonElement>("sb-short").textContent =
+  `⬇️ Продать ${fmt(cur().amount)} ${cur().base} (шорт)`;
+$<HTMLButtonElement>("sb-long").textContent =
+  `⬆️ Купить ${fmt(cur().amount)} ${cur().base} (лонг)`;
