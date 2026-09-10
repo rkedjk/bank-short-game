@@ -60,6 +60,46 @@ const now = (): string =>
 const money = (n: number, sym: string): string =>
   `${n < 0 ? "−" : ""}${sym}${fmt(Math.abs(n))}`;
 
+// ---------- Микро-анимации ----------
+const tweenRaf = new WeakMap<HTMLElement, number>();
+// Плавный пересчёт числа (count-up): от текущего отображаемого к новому.
+// cache.v всегда хранит фактически показанное значение — можно догонять на drag.
+function tween(
+  el: HTMLElement,
+  from: number,
+  to: number,
+  fmt: (n: number) => string,
+  cache: { v: number },
+  ms = 200,
+): void {
+  const prev = tweenRaf.get(el);
+  if (prev) cancelAnimationFrame(prev);
+  const t0 = performance.now();
+  const step = (t: number) => {
+    const p = Math.min(1, (t - t0) / ms);
+    const e = 1 - (1 - p) ** 3; // ease-out cubic
+    cache.v = from + (to - from) * e;
+    el.textContent = fmt(cache.v);
+    if (p < 1) tweenRaf.set(el, requestAnimationFrame(step));
+    else tweenRaf.delete(el);
+  };
+  tweenRaf.set(el, requestAnimationFrame(step));
+}
+
+// Всплывающее число над ящиком при сделке
+function floatNum(vault: HTMLElement, text: string, up: boolean): void {
+  const n = el("div", `float-num ${up ? "up" : "down"}`, text);
+  vault.appendChild(n);
+  setTimeout(() => n.remove(), 950);
+}
+
+// Лёгкое появление панели при смене шага/режима
+function fadeIn(node: HTMLElement): void {
+  node.classList.remove("fade-up");
+  void node.offsetWidth; // перезапуск анимации
+  node.classList.add("fade-up");
+}
+
 // ---------- Сценарии (каждая пара — отдельная задачка со своей текстовкой) ----------
 const CURRENCY_NAMES: Record<string, string> = {
   USD: "Доллары",
@@ -221,6 +261,13 @@ let curIdx = 0;
 const cur = (): Scenario => SCENARIOS[curIdx];
 
 let rate = SCENARIOS[0].entry;
+let prevRate = SCENARIOS[0].entry; // для вспышки тикера
+let tickerFlashOn = false;
+let sliderLo = 0; // диапазон слайдера (для заполнения трека)
+let sliderHi = 1;
+const shownBase = { v: 0 }; // отображаемые значения для count-up
+const shownQuote = { v: 0 };
+const shownPnl = { v: 0 };
 let mode: "scenario" | "sandbox" = "scenario";
 
 const scenario: Game = {
@@ -276,6 +323,7 @@ const elQuizQuestions = $("quiz-questions");
 const elSbHint = $("sb-hint");
 const elSbLog = $("sb-log");
 const elThemeToggle = $("theme-toggle");
+const elScale = el("div", "slider-scale");
 
 // ---------- DOM-хелперы (без innerHTML) ----------
 function el<K extends keyof HTMLElementTagNameMap>(
@@ -344,6 +392,11 @@ function btn(
 }
 
 // ---------- Курс и слайдер ----------
+function paintSlider(): void {
+  const p = (rate - sliderLo) / (sliderHi - sliderLo || 1);
+  elSlider.style.background = `linear-gradient(to right, var(--tds-yellow) ${p * 100}%, var(--tds-neutral) ${p * 100}%)`;
+}
+
 function setSliderRange(): void {
   const s = cur();
   const span = s.entry * 0.2;
@@ -353,12 +406,20 @@ function setSliderRange(): void {
   elSlider.min = String(lo);
   elSlider.max = String(hi);
   elSlider.step = String(step);
+  sliderLo = lo;
+  sliderHi = hi;
+  elScale.replaceChildren(
+    el("span", "", fmtRate(lo, s.digits)),
+    el("span", "", fmtRate(hi, s.digits)),
+  );
+  paintSlider();
 }
 
 function setRate(v: number): void {
   const s = cur();
   rate = Math.round(v * 10 ** s.digits) / 10 ** s.digits;
   elSlider.value = String(rate);
+  paintSlider();
   renderBoard();
 }
 
@@ -439,7 +500,7 @@ function renderBoard(): void {
   elVaultBaseLabel.textContent = `${s.baseEmoji} ${baseName} у банка`;
   elVaultQuoteLabel.textContent = `${s.quoteEmoji} ${CURRENCY_NAMES[s.quote] ?? s.quote} у банка`;
 
-  elVaultBase.textContent = fmt(g.base);
+  tween(elVaultBase, shownBase.v, g.base, fmt, shownBase);
   elVaultBase.className = `vault-amount${g.base < 0 ? " debt" : ""}`;
   if (g.pos.side === "short") {
     elVaultBaseNote.textContent = `⚠️ банк ДОЛЖЕН клиенту ${fmt(s.amount)} ${s.base}`;
@@ -449,7 +510,7 @@ function renderBoard(): void {
     elVaultBaseNote.textContent = "свои";
   }
 
-  elVaultQuote.textContent = fmt(g.quote);
+  tween(elVaultQuote, shownQuote.v, g.quote, fmt, shownQuote);
   elVaultQuote.className = `vault-amount${g.quote < 0 ? " debt" : ""}`;
   elVaultQuoteNote.textContent = g.lastClose
     ? `последняя сделка: ${g.lastClose.text}`
@@ -477,10 +538,29 @@ function renderBoard(): void {
 
   // PnL
   const pnl = g.pos.side ? openPnl(g) : (g.lastClose?.pnl ?? 0);
-  elPnl.textContent = `Прибыль/убыток: ${money(pnl, s.quoteSym)}`;
+  tween(
+    elPnl,
+    shownPnl.v,
+    pnl,
+    (n) => `Прибыль/убыток: ${money(n, s.quoteSym)}`,
+    shownPnl,
+  );
   elPnl.className = `pnl ${pnl > 0 ? "up" : pnl < 0 ? "down" : "flat"}`;
   elPnl.classList.add("flash");
   setTimeout(() => elPnl.classList.remove("flash"), 500);
+
+  // Вспышка тикера при изменении курса (не перезапускается, пока идёт)
+  if (rate !== prevRate) {
+    prevRate = rate;
+    if (!tickerFlashOn) {
+      tickerFlashOn = true;
+      elRate.classList.add("flash");
+      setTimeout(() => {
+        elRate.classList.remove("flash");
+        tickerFlashOn = false;
+      }, 400);
+    }
+  }
 }
 
 function flashSwap(): void {
@@ -490,8 +570,16 @@ function flashSwap(): void {
 }
 
 // Тостер в стиле уведомлений Т-банка: плашка сверху, автоскрытие
+const TOAST_ICONS: Record<string, string> = {
+  ok: "✅",
+  err: "⚠️",
+  info: "ℹ️",
+};
 function toast(text: string, kind: "ok" | "err" | "info" = "ok"): void {
-  const t = el("div", `toast ${kind}`, text);
+  const t = el("div", `toast ${kind}`);
+  t.setAttribute("role", "status");
+  const icon = el("span", "toast-icon", TOAST_ICONS[kind] ?? "");
+  t.append(icon, document.createTextNode(text));
   document.body.appendChild(t);
   requestAnimationFrame(() => t.classList.add("show"));
   setTimeout(() => {
@@ -562,9 +650,11 @@ function renderScenario(): void {
     ...SCENARIO_TITLES.map((t, i) => {
       const cls =
         i < scenarioStep ? "done" : i === scenarioStep ? "active" : "";
+      const wrap = el("div", "step");
       const dot = el("span", `step-dot ${cls}`, String(i + 1));
       dot.title = t;
-      return dot;
+      wrap.append(dot, el("span", `step-label ${cls}`, t));
+      return wrap;
     }),
   );
 
@@ -587,6 +677,7 @@ function renderScenario(): void {
   }
   elSlider.disabled = scenarioStep !== 1 && scenarioStep !== 2;
   renderBoard();
+  fadeIn(elScenario);
 }
 
 function renderStep0(): void {
@@ -604,6 +695,7 @@ function renderStep0(): void {
         setRate(s.entry); // фиксируем стартовый курс задачки
         openTrade(scenario, "short");
         flashSwap();
+        floatNum(elVaultQuote, `+${fmt(gainOf(s))} ${s.quoteSym}`, true);
         scenarioStep = 1;
         renderScenario();
       },
@@ -658,6 +750,7 @@ function renderStep2(): void {
           text: `${pnl < 0 ? "убыток" : "прибыль"} ${fmt(Math.abs(pnl))} ${s.quote}`,
         };
         flashSwap();
+        floatNum(elVaultBase, `+${fmt(s.amount)} ${s.base}`, true);
         toast(
           `Операция выполнена · ${pnl < 0 ? "убыток" : "прибыль"} ${money(Math.abs(pnl), s.quoteSym)}`,
           pnl >= 0 ? "ok" : "err",
@@ -701,6 +794,7 @@ function renderStep4(): void {
   elScenario.classList.add("hidden");
   elQuiz.classList.remove("hidden");
   quizScore = 0;
+  fadeIn(elQuiz);
   renderQuiz();
 }
 
@@ -818,11 +912,22 @@ function resetScenario(): void {
   if (mode !== "scenario") switchMode("scenario");
   setRate(s.entry);
   renderScenario();
+  fadeIn(elScenario);
 }
 
 // ---------- Песочница ----------
 function renderSandboxLog(): void {
   elSbLog.replaceChildren();
+  if (sandboxLog.length === 0) {
+    elSbLog.appendChild(
+      el(
+        "div",
+        "sb-empty",
+        "Здесь появится история твоих операций — открывай и закрывай позиции.",
+      ),
+    );
+    return;
+  }
   for (const l of sandboxLog) {
     const row = el("div", "entry");
     const icon = el("span", "tx-icon", l.icon);
@@ -857,6 +962,11 @@ function initSandbox(): void {
     } else {
       openTrade(sandbox, "short");
       flashSwap();
+      floatNum(
+        elVaultQuote,
+        `+${fmt(Math.round(rate * sandbox.pos.amount))} ${cur().quoteSym}`,
+        true,
+      );
       logEntry(`Продажа ${fmt(sandbox.pos.amount)} ${cur().base} (шорт)`, {
         icon: "↓",
         cls: "up",
@@ -873,6 +983,7 @@ function initSandbox(): void {
     } else {
       openTrade(sandbox, "long");
       flashSwap();
+      floatNum(elVaultBase, `+${fmt(sandbox.pos.amount)} ${cur().base}`, true);
       logEntry(`Покупка ${fmt(sandbox.pos.amount)} ${cur().base} (лонг)`, {
         icon: "↑",
         cls: "down",
@@ -886,12 +997,20 @@ function initSandbox(): void {
   $("sb-close").addEventListener("click", () => {
     if (sandbox.pos.side) {
       const side = sandbox.pos.side;
+      const amt = sandbox.pos.amount;
       const pnl = closeTrade(sandbox);
       sandbox.lastClose = {
         pnl,
         text: `${pnl < 0 ? "убыток" : "прибыль"} ${fmt(Math.abs(pnl))} ${cur().quote}`,
       };
       flashSwap();
+      floatNum(
+        side === "short" ? elVaultBase : elVaultQuote,
+        side === "short"
+          ? `+${fmt(amt)} ${cur().base}`
+          : `+${fmt(Math.round(rate * amt))} ${cur().quoteSym}`,
+        true,
+      );
       logEntry(
         `Закрытие ${side === "short" ? "шорта" : "лонга"} @ ${fmtRate(rate, cur().digits)}`,
         {
@@ -920,6 +1039,8 @@ function applyTheme(t: "light" | "dark"): void {
   } catch {
     /* localStorage недоступен — тема просто не сохранится */
   }
+  const meta = document.querySelector<HTMLMetaElement>("#theme-color-meta");
+  if (meta) meta.content = t === "dark" ? "#202020" : "#ffdd2d";
   elThemeToggle.textContent = t === "dark" ? "☀️" : "🌙";
 }
 
@@ -950,6 +1071,9 @@ function switchMode(m: "scenario" | "sandbox"): void {
   elSlider.disabled =
     m === "scenario" && scenarioStep !== 1 && scenarioStep !== 2;
   renderBoard();
+  const visible =
+    m === "scenario" ? (scenarioStep === 4 ? elQuiz : elScenario) : elSandbox;
+  fadeIn(visible);
 }
 
 // ---------- Инициализация ----------
@@ -964,6 +1088,7 @@ elSlider.addEventListener("input", () => {
 });
 
 renderPairSelect();
+elSlider.after(elScale);
 setSliderRange();
 setRate(SCENARIOS[0].entry);
 initTheme();

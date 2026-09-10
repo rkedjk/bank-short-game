@@ -61,11 +61,12 @@ html {
 body {
   margin: 0;
   font-family:
-    "Tinkoff Sans", "T-Sans", system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+    "Manrope", "Tinkoff Sans", "T-Sans", system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
   background: var(--tds-bg);
   color: var(--tds-text);
   min-height: 100vh;
+  min-height: 100dvh;
   line-height: 1.45;
   transition:
     background 0.2s,
@@ -80,6 +81,16 @@ body {
 button {
   font-family: inherit;
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Видимый фокус с клавиатуры (не мешает мыши) */
+:focus-visible {
+  outline: 2px solid var(--tds-black);
+  outline-offset: 2px;
+}
+[data-theme="dark"] :focus-visible {
+  outline-color: var(--tds-yellow);
 }
 
 /* ---------- Шапка ---------- */
@@ -225,6 +236,26 @@ main {
   letter-spacing: -1px;
   color: var(--tds-text);
 }
+.ticker-value.flash {
+  animation: tickerPulse 0.35s ease;
+}
+@keyframes tickerPulse {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.ticker-value.up.flash {
+  text-shadow: 0 0 26px rgba(0, 185, 45, 0.45);
+}
+.ticker-value.down.flash {
+  text-shadow: 0 0 26px rgba(245, 34, 34, 0.4);
+}
 .ticker-value.up {
   color: var(--tds-green);
 }
@@ -248,15 +279,71 @@ main {
   font-size: 13px;
 }
 
+/* ---------- Слайдер курса: кастомный трек с заполнением ---------- */
 input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
   width: 100%;
-  margin: 12px 0 4px;
-  accent-color: var(--tds-black);
+  height: 6px;
+  margin: 20px 0 6px;
+  border-radius: 999px;
+  background: var(--tds-neutral);
   cursor: pointer;
+  /* заполнение до thumb задаётся из JS инлайн-градиентом */
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--tds-yellow);
+  border: 2px solid var(--tds-black);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  cursor: grab;
+  transition: transform 0.15s;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+input[type="range"]::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.05);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--tds-yellow);
+  border: 2px solid var(--tds-black);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  cursor: grab;
+}
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: transparent;
 }
 input[type="range"]:disabled {
   opacity: 0.35;
   cursor: not-allowed;
+}
+input[type="range"]:disabled::-webkit-slider-thumb {
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Метки диапазона курса под слайдером */
+.slider-scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--tds-muted);
+  font-variant-numeric: tabular-nums;
+  padding: 0 2px;
+}
+.slider-scale:empty {
+  display: none;
 }
 
 .vaults {
@@ -267,6 +354,7 @@ input[type="range"]:disabled {
   margin-top: 8px;
 }
 .vault {
+  position: relative;
   background: var(--tds-bg);
   border: 1px solid var(--tds-border);
   border-radius: var(--radius-btn);
@@ -274,7 +362,13 @@ input[type="range"]:disabled {
   text-align: center;
   transition:
     transform 0.2s,
-    border-color 0.2s;
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+.vault:hover {
+  transform: translateY(-1px);
+  border-color: var(--tds-yellow);
+  box-shadow: var(--shadow-card);
 }
 .vault-label {
   color: var(--tds-muted);
@@ -295,6 +389,39 @@ input[type="range"]:disabled {
   color: var(--tds-muted);
   font-size: 12px;
   min-height: 16px;
+}
+
+/* Всплывающее число при сделке */
+.float-num {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  animation: floatUp 0.9s ease forwards;
+  z-index: 5;
+}
+.float-num.up {
+  color: var(--tds-green);
+}
+.float-num.down {
+  color: var(--tds-red);
+}
+@keyframes floatUp {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -20%);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -170%);
+  }
 }
 .swap-arrow {
   font-size: 28px;
@@ -372,12 +499,32 @@ input[type="range"]:disabled {
   }
 }
 
+/* Появление панелей при смене шага/режима */
+.fade-up {
+  animation: fadeInUp 0.25s ease;
+}
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* ---------- Сценарий ---------- */
 .progress {
   display: flex;
   gap: 8px;
   margin-bottom: 16px;
   flex-wrap: wrap;
+}
+.step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 .step-dot {
   width: 26px;
@@ -391,6 +538,10 @@ input[type="range"]:disabled {
   font-size: 12px;
   font-weight: 700;
   background: var(--tds-card);
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s;
 }
 .step-dot.done {
   background: var(--tds-yellow);
@@ -400,6 +551,28 @@ input[type="range"]:disabled {
 .step-dot.active {
   border-color: var(--tds-black);
   color: var(--tds-text);
+  animation: dotPulse 1.6s ease-in-out infinite;
+}
+@keyframes dotPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 221, 45, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(255, 221, 45, 0);
+  }
+}
+.step-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tds-muted);
+}
+.step-label.done {
+  color: var(--tds-text);
+}
+.step-label.active {
+  color: var(--tds-text);
+  font-weight: 600;
 }
 
 .lesson-title {
@@ -471,9 +644,12 @@ input[type="range"]:disabled {
 }
 .btn:hover {
   filter: brightness(0.96);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 .btn:active {
-  transform: scale(0.98);
+  transform: translateY(0) scale(0.98);
+  box-shadow: none;
 }
 .btn:disabled {
   opacity: 0.4;
@@ -653,6 +829,7 @@ input[type="range"]:disabled {
     transform 0.3s ease,
     opacity 0.3s ease;
   pointer-events: none;
+  overflow: hidden;
 }
 .toast.show {
   transform: translate(-50%, 0);
@@ -664,12 +841,58 @@ input[type="range"]:disabled {
 .toast.err {
   border-left: 4px solid var(--tds-red);
 }
+.toast .toast-icon {
+  margin-right: 8px;
+}
+.toast::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--tds-green);
+  animation: toastProgress 2.6s linear forwards;
+}
+.toast.err::after {
+  background: var(--tds-red);
+}
+@keyframes toastProgress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0;
+  }
+}
+
+/* Пустое состояние лога песочницы */
+.sb-empty {
+  text-align: center;
+  color: var(--tds-muted);
+  font-size: 13px;
+  padding: 22px 10px;
+}
 
 .footer {
   text-align: center;
   color: var(--tds-muted);
   font-size: 13px;
   padding: 10px 0 26px;
+}
+
+/* ---------- Средние экраны (планшеты) ---------- */
+@media (min-width: 641px) and (max-width: 900px) {
+  .ticker-value {
+    font-size: 38px;
+  }
+  .panel,
+  .board {
+    padding: 18px;
+  }
+  .vault-amount {
+    font-size: 20px;
+  }
 }
 
 /* ---------- Адаптив под телефон ---------- */
@@ -794,6 +1017,12 @@ input[type="range"]:disabled {
   .progress {
     gap: 6px;
   }
+  .step {
+    gap: 0;
+  }
+  .step-label {
+    display: none;
+  }
   .step-dot {
     width: 24px;
     height: 24px;
@@ -802,5 +1031,16 @@ input[type="range"]:disabled {
   .sb-log {
     max-height: 200px;
     font-size: 12.5px;
+  }
+}
+
+/* ---------- Отключаем анимации по запросу пользователя ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

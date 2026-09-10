@@ -3,6 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ffdd2d" id="theme-color-meta" />
+    <meta
+      name="description"
+      content="Учебный симулятор: почему «курс вырос» — это убыток для банка, который продал валюту (сел в шорт)."
+    />
+    <meta property="og:title" content="Банк в шорте — учебный симулятор" />
+    <meta
+      property="og:description"
+      content="Пойми, почему «курс вырос» — это убыток для банка, который продал валюту."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="apple-mobile-web-app-title" content="Банк в шорте" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%A6%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <title>Банк в шорте — учебный симулятор</title>
     <script>
       // Применяем тему до первого кадра, чтобы не было «вспышки»
@@ -46,7 +68,9 @@
         <div class="ticker">
           <div>
             <span class="ticker-label" id="pair-label">USD/JPY</span>
-            <span class="ticker-value" id="rate">109.78</span>
+            <span class="ticker-value" id="rate" aria-live="polite"
+              >109.78</span
+            >
           </div>
           <div class="ticker-delta" id="rate-delta">▲ 0.00</div>
           <div class="ticker-note" id="rate-note"></div>
