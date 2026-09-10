@@ -1,0 +1,477 @@
+:root {
+  --bg: #0f172a;
+  --panel: #1e293b;
+  --panel-2: #263449;
+  --border: #334155;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --green: #22c55e;
+  --red: #ef4444;
+  --amber: #f59e0b;
+  --blue: #38bdf8;
+  --radius: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: linear-gradient(180deg, #0b1220, var(--bg));
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.header {
+  text-align: center;
+  padding: 28px 16px 8px;
+}
+.header h1 {
+  margin: 0 0 6px;
+  font-size: 30px;
+}
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px 12px 0;
+}
+
+.tab {
+  font-size: 15px;
+  padding: 10px 22px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--muted);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.tab:hover {
+  color: var(--text);
+  border-color: var(--blue);
+}
+.tab.active {
+  color: #0b1220;
+  background: var(--blue);
+  border-color: var(--blue);
+  font-weight: 600;
+}
+
+main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 14px 16px 30px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-top: 14px;
+}
+.hidden {
+  display: none !important;
+}
+
+/* ---------- Доска: тикер, ящики, позиция ---------- */
+.board {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.ticker {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.ticker-label {
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.ticker-value {
+  font-size: 44px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.ticker-value.up {
+  color: var(--green);
+}
+.ticker-value.down {
+  color: var(--red);
+}
+.ticker-delta {
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.ticker-delta.up {
+  color: var(--green);
+}
+.ticker-delta.down {
+  color: var(--red);
+}
+.ticker-note {
+  width: 100%;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+input[type="range"] {
+  width: 100%;
+  margin: 12px 0 4px;
+  accent-color: var(--blue);
+}
+input[type="range"]:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.vaults {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 14px;
+  margin-top: 8px;
+}
+.vault {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
+  transition:
+    transform 0.2s,
+    border-color 0.2s;
+}
+.vault-label {
+  color: var(--muted);
+  font-size: 13px;
+}
+.vault-amount {
+  font-size: 22px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  margin: 6px 0 2px;
+}
+.vault-amount.debt {
+  color: var(--red);
+}
+.vault-note {
+  color: var(--muted);
+  font-size: 12px;
+  min-height: 16px;
+}
+.swap-arrow {
+  font-size: 28px;
+  color: var(--muted);
+  animation: none;
+}
+.vaults.swap .swap-arrow {
+  animation: swapPulse 0.7s ease;
+}
+.vaults.swap .vault {
+  border-color: var(--blue);
+}
+@keyframes swapPulse {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.5);
+    color: var(--blue);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.position {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pos-label {
+  color: var(--muted);
+}
+#pos-side.short {
+  color: var(--red);
+  font-weight: 700;
+}
+#pos-side.long {
+  color: var(--green);
+  font-weight: 700;
+}
+#pos-entry {
+  color: var(--muted);
+}
+.pnl {
+  font-size: 20px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  transition: transform 0.15s;
+}
+.pnl.up {
+  color: var(--green);
+}
+.pnl.down {
+  color: var(--red);
+}
+.pnl.flat {
+  color: var(--muted);
+}
+.pnl.flash {
+  animation: pnlFlash 0.5s ease;
+}
+@keyframes pnlFlash {
+  0% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ---------- Сценарий ---------- */
+.progress {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.step-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+.step-dot.done {
+  background: var(--green);
+  border-color: var(--green);
+  color: #0b1220;
+}
+.step-dot.active {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+.lesson-title {
+  margin: 0 0 10px;
+  font-size: 21px;
+}
+.lesson p {
+  line-height: 1.55;
+  margin: 8px 0;
+}
+.lesson .key {
+  background: var(--panel-2);
+  border-left: 4px solid var(--amber);
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 15px;
+  margin: 12px 0;
+}
+.lesson .bad {
+  border-left-color: var(--red);
+}
+.lesson .good {
+  border-left-color: var(--green);
+}
+.lesson .math {
+  background: #0b1220;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  color: var(--text);
+}
+.lesson .math .neg {
+  color: var(--red);
+  font-weight: 700;
+}
+.lesson .math .pos {
+  color: var(--green);
+  font-weight: 700;
+}
+.lesson .math .dim {
+  color: var(--muted);
+}
+
+.actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  color: #0b1220;
+  transition: 0.15s;
+}
+.btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+.btn-primary {
+  background: var(--blue);
+}
+.btn-sell {
+  background: var(--red);
+  color: #fff;
+}
+.btn-buy {
+  background: var(--green);
+}
+.btn-ghost {
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+/* ---------- Викторина ---------- */
+#quiz h2 {
+  margin-top: 0;
+}
+.q {
+  margin-bottom: 22px;
+}
+.q-text {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.q-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.q-opt {
+  text-align: left;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.q-opt:hover {
+  border-color: var(--blue);
+}
+.q-opt.right {
+  border-color: var(--green);
+  background: rgba(34, 197, 94, 0.15);
+}
+.q-opt.wrong {
+  border-color: var(--red);
+  background: rgba(239, 68, 68, 0.12);
+}
+.q-expl {
+  margin-top: 10px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.q-expl:empty {
+  display: none;
+}
+
+/* ---------- Песочница ---------- */
+.sb-hint {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.sb-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 6px 0 14px;
+}
+.sb-log {
+  background: #0b1220;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13.5px;
+  max-height: 260px;
+  overflow-y: auto;
+  line-height: 1.7;
+}
+.sb-log .entry {
+  margin: 2px 0;
+}
+.sb-log .entry .t {
+  color: var(--muted);
+}
+.sb-log .up {
+  color: var(--green);
+  font-weight: 600;
+}
+.sb-log .down {
+  color: var(--red);
+  font-weight: 600;
+}
+
+.footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 10px 0 26px;
+}
+
+@media (max-width: 560px) {
+  .ticker-value {
+    font-size: 34px;
+  }
+  .vault-amount {
+    font-size: 17px;
+  }
+  .vaults {
+    gap: 8px;
+  }
+  .position {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

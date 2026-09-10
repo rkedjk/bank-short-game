@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Банк в шорте — учебный симулятор</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <header class="header">
+      <h1>🏦 Банк в шорте</h1>
+      <p class="subtitle">
+        Пойми, почему «курс вырос» — это убыток для банка, который продал
+        доллары
+      </p>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="scenario">🎬 Сценарий</button>
+      <button class="tab" data-tab="sandbox">🧪 Песочница</button>
+    </nav>
+
+    <main>
+      <!-- Общая панель: тикер, ящики, позиция, PnL -->
+      <section class="board">
+        <div class="ticker">
+          <div>
+            <span class="ticker-label">USD/JPY</span>
+            <span class="ticker-value" id="rate">109.78</span>
+          </div>
+          <div class="ticker-delta" id="rate-delta">▲ 0.00</div>
+          <div class="ticker-note" id="rate-note"></div>
+        </div>
+
+        <input
+          type="range"
+          id="rate-slider"
+          min="90"
+          max="140"
+          step="0.01"
+          value="109.78"
+          aria-label="Курс USD/JPY"
+        />
+
+        <div class="vaults" id="vaults">
+          <div class="vault vault-usd">
+            <div class="vault-label">💵 Доллары у банка</div>
+            <div class="vault-amount" id="vault-usd">1 000 000</div>
+            <div class="vault-note" id="vault-usd-note">свои</div>
+          </div>
+          <div class="swap-arrow" id="swap-arrow">⇄</div>
+          <div class="vault vault-jpy">
+            <div class="vault-label">💴 Йены у банка</div>
+            <div class="vault-amount" id="vault-jpy">0</div>
+            <div class="vault-note" id="vault-jpy-note">—</div>
+          </div>
+        </div>
+
+        <div class="position">
+          <div class="pos-row">
+            <span class="pos-label">Позиция:</span>
+            <span id="pos-side">—</span>
+            <span id="pos-amount">нет сделок</span>
+            <span id="pos-entry"></span>
+          </div>
+          <div class="pnl" id="pnl">Прибыль/убыток: ¥0</div>
+        </div>
+      </section>
+
+      <!-- Сценарий -->
+      <section id="scenario" class="panel">
+        <div class="progress" id="scenario-progress"></div>
+        <div class="lesson" id="lesson"></div>
+        <div class="actions" id="lesson-actions"></div>
+      </section>
+
+      <!-- Викторина (показывается на последнем шаге сценария) -->
+      <section id="quiz" class="panel hidden">
+        <h2>✅ Проверь себя</h2>
+        <div id="quiz-questions"></div>
+      </section>
+
+      <!-- Песочница -->
+      <section id="sandbox" class="panel hidden">
+        <p class="sb-hint">
+          Двигай курс ползунком, открывай и закрывай позиции — и смотри, как
+          меняется прибыль/убыток. Стартовый капитал: <b>200 000 000 ¥</b>.
+        </p>
+        <div class="sb-buttons">
+          <button class="btn btn-short" id="sb-short">
+            ⬇️ Продать 1 млн USD (шорт)
+          </button>
+          <button class="btn btn-long" id="sb-long">
+            ⬆️ Купить 1 млн USD (лонг)
+          </button>
+          <button class="btn btn-close" id="sb-close">
+            🔒 Закрыть позицию
+          </button>
+        </div>
+        <div class="sb-log" id="sb-log"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      Учебный симулятор. Не является финансовой рекомендацией. 🙂
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
