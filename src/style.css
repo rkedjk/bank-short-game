@@ -66,6 +66,34 @@ body {
   font-weight: 600;
 }
 
+.pair-select {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.pair-btn {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--muted);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.15s;
+  min-height: 40px;
+}
+.pair-btn:hover {
+  color: var(--text);
+  border-color: var(--blue);
+}
+.pair-btn.active {
+  color: #0b1220;
+  background: var(--blue);
+  border-color: var(--blue);
+}
+
 main {
   max-width: 760px;
   margin: 0 auto;
@@ -460,18 +488,115 @@ input[type="range"]:disabled {
   padding: 10px 0 26px;
 }
 
-@media (max-width: 560px) {
-  .ticker-value {
-    font-size: 34px;
+@media (max-width: 640px) {
+  main {
+    padding: 10px 10px 24px;
   }
-  .vault-amount {
-    font-size: 17px;
+  .header {
+    padding: 18px 12px 4px;
+  }
+  .header h1 {
+    font-size: 24px;
+  }
+  .subtitle {
+    font-size: 13px;
+  }
+  .tabs {
+    padding: 12px 10px 0;
+    gap: 8px;
+  }
+  .tab {
+    flex: 1;
+    padding: 12px 8px;
+    font-size: 14px;
+    min-height: 46px;
+  }
+  .panel,
+  .board {
+    padding: 14px;
+    border-radius: 12px;
+  }
+  .pair-btn {
+    flex: 1;
+    min-width: calc(50% - 4px);
+    padding: 10px 8px;
+    font-size: 13px;
+    min-height: 44px;
+  }
+  .ticker-value {
+    font-size: 32px;
+  }
+  .ticker-delta {
+    font-size: 14px;
+  }
+  input[type="range"] {
+    height: 40px;
+    margin: 8px 0 0;
   }
   .vaults {
-    gap: 8px;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 6px;
+  }
+  .swap-arrow {
+    font-size: 0;
+  }
+  .swap-arrow::after {
+    content: "⇅";
+    font-size: 26px;
+    color: var(--muted);
+  }
+  .vault {
+    padding: 12px;
+  }
+  .vault-amount {
+    font-size: 19px;
   }
   .position {
     flex-direction: column;
     align-items: flex-start;
+  }
+  .pnl {
+    font-size: 17px;
+  }
+  .lesson-title {
+    font-size: 18px;
+  }
+  .lesson .key {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .actions .btn,
+  .sb-buttons .btn {
+    width: 100%;
+    min-height: 48px;
+  }
+  .sb-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .q-opt {
+    min-height: 46px;
+    padding: 12px 12px;
+    font-size: 14px;
+  }
+  .q-text {
+    font-size: 15px;
+  }
+  .progress {
+    gap: 6px;
+  }
+  .step-dot {
+    width: 24px;
+    height: 24px;
+    font-size: 11px;
+  }
+  .sb-log {
+    max-height: 200px;
+    font-size: 12.5px;
   }
 }

@@ -10,7 +10,7 @@
 
 ## Запуск
 
-Игра опубликована на GitHub Pages: **https://rkedjk.github.io/bank-short-game/** — можно открывать без установки Node.
+Игра опубликована на GitHub Pages: **<https://rkedjk.github.io/bank-short-game/>** — можно открывать без установки Node.
 
 Локальный запуск:
 
