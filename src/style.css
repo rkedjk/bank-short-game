@@ -60,12 +60,16 @@ html {
 
 body {
   margin: 0;
-  font-family: "Tinkoff Sans", "T-Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Tinkoff Sans", "T-Sans", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
   background: var(--tds-bg);
   color: var(--tds-text);
   min-height: 100vh;
   line-height: 1.45;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 
 ::selection {
@@ -169,6 +173,32 @@ main {
 }
 
 /* ---------- Селектор валютных пар ---------- */
+.board-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.board-top .pair-select {
+  flex: 1;
+  margin-bottom: 0;
+}
+.eye-btn {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--tds-border);
+  background: var(--tds-bg);
+  color: var(--tds-text);
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.eye-btn:hover {
+  border-color: var(--tds-black);
+  background: var(--tds-yellow-soft);
+}
 .pair-select {
   display: flex;
   flex-wrap: wrap;
@@ -268,7 +298,9 @@ input[type="range"]:disabled {
   border-radius: var(--radius-btn);
   padding: 14px;
   text-align: center;
-  transition: transform 0.2s, border-color 0.2s;
+  transition:
+    transform 0.2s,
+    border-color 0.2s;
 }
 .vault-label {
   color: var(--tds-muted);
@@ -567,25 +599,94 @@ input[type="range"]:disabled {
   background: var(--tds-bg);
   border: 1px solid var(--tds-border);
   border-radius: 10px;
-  padding: 12px 14px;
+  padding: 4px 8px;
   font-size: 13.5px;
   max-height: 260px;
   overflow-y: auto;
-  line-height: 1.7;
+  line-height: 1.4;
 }
 .sb-log .entry {
-  margin: 2px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--tds-border);
 }
-.sb-log .entry .t {
+.sb-log .entry:last-child {
+  border-bottom: none;
+}
+.tx-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--tds-card);
+  border: 1px solid var(--tds-border);
+  color: var(--tds-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+.tx-mid {
+  flex: 1;
+  min-width: 0;
+}
+.tx-title {
+  font-weight: 500;
+  color: var(--tds-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tx-mid .t {
   color: var(--tds-muted);
+  font-size: 12px;
+}
+.tx-amount {
+  flex-shrink: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.tx-amount:empty {
+  display: none;
 }
 .sb-log .up {
   color: var(--tds-green);
-  font-weight: 600;
 }
 .sb-log .down {
   color: var(--tds-red);
+}
+
+/* ---------- Тостер (уведомление операции) ---------- */
+.toast {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translate(-50%, -120%);
+  z-index: 100;
+  max-width: min(92vw, 480px);
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 14px;
   font-weight: 600;
+  background: var(--tds-card);
+  color: var(--tds-text);
+  border: 1px solid var(--tds-border);
+  box-shadow: var(--shadow-pop);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  pointer-events: none;
+}
+.toast.show {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
+.toast.ok {
+  border-left: 4px solid var(--tds-green);
+}
+.toast.err {
+  border-left: 4px solid var(--tds-red);
 }
 
 .footer {
@@ -615,7 +716,15 @@ input[type="range"]:disabled {
     height: 40px;
   }
   .tabs {
-    padding: 12px 10px 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+    background: var(--tds-card);
+    border-top: 1px solid var(--tds-border);
+    z-index: 10;
     gap: 2px;
   }
   .tab {
@@ -623,6 +732,12 @@ input[type="range"]:disabled {
     padding: 12px 8px;
     font-size: 14px;
     min-height: 46px;
+  }
+  main {
+    padding-bottom: 84px;
+  }
+  .footer {
+    padding-bottom: 84px;
   }
   .panel,
   .board {

@@ -241,10 +241,13 @@ let scenarioStep = 0; // 0 продажа · 1 движение · 2 рост/к
 let quizScore = 0;
 interface LogEntry {
   t: string;
-  text: string;
+  title: string;
+  amount: string;
   cls: "up" | "down" | "";
+  icon: string;
 }
 const sandboxLog: LogEntry[] = [];
+let eyeHidden = false;
 
 // ---------- DOM ----------
 const elPairSelect = $("pair-select");
@@ -274,6 +277,7 @@ const elQuizQuestions = $("quiz-questions");
 const elSbHint = $("sb-hint");
 const elSbLog = $("sb-log");
 const elThemeToggle = $("theme-toggle");
+const elEye = $("eye");
 
 // ---------- DOM-хелперы (без innerHTML) ----------
 function el<K extends keyof HTMLElementTagNameMap>(
@@ -433,11 +437,12 @@ function renderBoard(): void {
       "Пока нет открытой позиции — двигай курс и открывай сделки";
   }
 
-  // Ящики
+  // Ящики (с поддержкой «глаза» — скрытие сумм)
+  const mask = (v: string): string => (eyeHidden ? "•••" : v);
   elVaultBaseLabel.textContent = `${s.baseEmoji} ${baseName} у банка`;
   elVaultQuoteLabel.textContent = `${s.quoteEmoji} ${CURRENCY_NAMES[s.quote] ?? s.quote} у банка`;
 
-  elVaultBase.textContent = fmt(g.base);
+  elVaultBase.textContent = mask(fmt(g.base));
   elVaultBase.className = `vault-amount${g.base < 0 ? " debt" : ""}`;
   if (g.pos.side === "short") {
     elVaultBaseNote.textContent = `⚠️ банк ДОЛЖЕН клиенту ${fmt(s.amount)} ${s.base}`;
@@ -447,7 +452,7 @@ function renderBoard(): void {
     elVaultBaseNote.textContent = "свои";
   }
 
-  elVaultQuote.textContent = fmt(g.quote);
+  elVaultQuote.textContent = mask(fmt(g.quote));
   elVaultQuote.className = `vault-amount${g.quote < 0 ? " debt" : ""}`;
   elVaultQuoteNote.textContent = g.lastClose
     ? `последняя сделка: ${g.lastClose.text}`
@@ -475,7 +480,9 @@ function renderBoard(): void {
 
   // PnL
   const pnl = g.pos.side ? openPnl(g) : (g.lastClose?.pnl ?? 0);
-  elPnl.textContent = `Прибыль/убыток: ${money(pnl, s.quoteSym)}`;
+  elPnl.textContent = eyeHidden
+    ? "Прибыль/убыток: •••"
+    : `Прибыль/убыток: ${money(pnl, s.quoteSym)}`;
   elPnl.className = `pnl ${pnl > 0 ? "up" : pnl < 0 ? "down" : "flat"}`;
   elPnl.classList.add("flash");
   setTimeout(() => elPnl.classList.remove("flash"), 500);
@@ -485,6 +492,17 @@ function flashSwap(): void {
   elVaults.classList.remove("swap");
   void elVaults.offsetWidth; // перезапуск анимации
   elVaults.classList.add("swap");
+}
+
+// Тостер в стиле уведомлений Т-банка: плашка сверху, автоскрытие
+function toast(text: string, kind: "ok" | "err" | "info" = "ok"): void {
+  const t = el("div", `toast ${kind}`, text);
+  document.body.appendChild(t);
+  requestAnimationFrame(() => t.classList.add("show"));
+  setTimeout(() => {
+    t.classList.remove("show");
+    setTimeout(() => t.remove(), 350);
+  }, 2600);
 }
 
 // ---------- Селектор валютных пар ----------
@@ -645,6 +663,10 @@ function renderStep2(): void {
           text: `${pnl < 0 ? "убыток" : "прибыль"} ${fmt(Math.abs(pnl))} ${s.quote}`,
         };
         flashSwap();
+        toast(
+          `Операция выполнена · ${pnl < 0 ? "убыток" : "прибыль"} ${money(Math.abs(pnl), s.quoteSym)}`,
+          pnl >= 0 ? "ok" : "err",
+        );
         scenarioStep = 3;
         renderScenario();
       },
@@ -808,31 +830,43 @@ function renderSandboxLog(): void {
   elSbLog.replaceChildren();
   for (const l of sandboxLog) {
     const row = el("div", "entry");
-    const time = el("span", "t", l.t + "  ");
-    row.appendChild(time);
-    rich(row, l.text);
-    if (l.cls) {
-      row.replaceChildren(time, el("span", l.cls, l.text));
-    }
+    const icon = el("span", "tx-icon", l.icon);
+    const mid = el("div", "tx-mid");
+    const title = el("div", "tx-title", l.title);
+    const time = el("div", "t", l.t);
+    mid.append(title, time);
+    const amount = el("span", `tx-amount ${l.cls}`, l.amount);
+    row.append(icon, mid, amount);
     elSbLog.appendChild(row);
   }
   elSbLog.scrollTop = elSbLog.scrollHeight;
 }
 
-function logEntry(text: string, cls: LogEntry["cls"] = ""): void {
-  sandboxLog.push({ t: now(), text, cls });
+function logEntry(
+  title: string,
+  opts: { cls?: LogEntry["cls"]; icon?: string; amount?: string } = {},
+): void {
+  sandboxLog.push({
+    t: now(),
+    title,
+    amount: opts.amount ?? "",
+    cls: opts.cls ?? "",
+    icon: opts.icon ?? "•",
+  });
 }
 
 function initSandbox(): void {
   $("sb-short").addEventListener("click", () => {
     if (sandbox.pos.side) {
-      logEntry("⚠️ Сначала закрой текущую позицию");
+      logEntry("Сначала закрой текущую позицию", { icon: "⚠️" });
     } else {
       openTrade(sandbox, "short");
       flashSwap();
-      logEntry(
-        `📌 Открыт SHORT ${fmt(sandbox.pos.amount)} ${cur().base} @ ${fmtRate(sandbox.pos.entry, cur().digits)}`,
-      );
+      logEntry(`Продажа ${fmt(sandbox.pos.amount)} ${cur().base} (шорт)`, {
+        icon: "↓",
+        cls: "up",
+        amount: `+${money(rate * sandbox.pos.amount, cur().quoteSym)}`,
+      });
     }
     renderSandboxLog();
     renderBoard();
@@ -840,13 +874,15 @@ function initSandbox(): void {
 
   $("sb-long").addEventListener("click", () => {
     if (sandbox.pos.side) {
-      logEntry("⚠️ Сначала закрой текущую позицию");
+      logEntry("Сначала закрой текущую позицию", { icon: "⚠️" });
     } else {
       openTrade(sandbox, "long");
       flashSwap();
-      logEntry(
-        `📌 Открыт LONG ${fmt(sandbox.pos.amount)} ${cur().base} @ ${fmtRate(sandbox.pos.entry, cur().digits)}`,
-      );
+      logEntry(`Покупка ${fmt(sandbox.pos.amount)} ${cur().base} (лонг)`, {
+        icon: "↑",
+        cls: "down",
+        amount: `−${money(rate * sandbox.pos.amount, cur().quoteSym)}`,
+      });
     }
     renderSandboxLog();
     renderBoard();
@@ -861,12 +897,17 @@ function initSandbox(): void {
         text: `${pnl < 0 ? "убыток" : "прибыль"} ${fmt(Math.abs(pnl))} ${cur().quote}`,
       };
       flashSwap();
-      logEntry(
-        `🔒 Закрыт ${side.toUpperCase()} @ ${fmtRate(rate, cur().digits)} → ${money(pnl, cur().quoteSym)}`,
-        pnl >= 0 ? "up" : "down",
+      logEntry(`Закрытие ${side === "short" ? "шорта" : "лонга"} @ ${fmtRate(rate, cur().digits)}`, {
+        icon: "✓",
+        cls: pnl >= 0 ? "up" : "down",
+        amount: `${pnl >= 0 ? "+" : "−"}${money(Math.abs(pnl), cur().quoteSym)}`,
+      });
+      toast(
+        `Операция выполнена · ${pnl < 0 ? "убыток" : "прибыль"} ${money(Math.abs(pnl), cur().quoteSym)}`,
+        pnl >= 0 ? "ok" : "err",
       );
     } else {
-      logEntry("ℹ️ Нет открытой позиции");
+      logEntry("Нет открытой позиции", { icon: "ℹ️" });
     }
     renderSandboxLog();
     renderBoard();
@@ -885,10 +926,13 @@ function applyTheme(t: "light" | "dark"): void {
 }
 
 function initTheme(): void {
-  const current = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+  const current =
+    document.documentElement.dataset.theme === "dark" ? "dark" : "light";
   elThemeToggle.textContent = current === "dark" ? "☀️" : "🌙";
   elThemeToggle.addEventListener("click", () =>
-    applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"),
+    applyTheme(
+      document.documentElement.dataset.theme === "dark" ? "light" : "dark",
+    ),
   );
 }
 
@@ -911,6 +955,12 @@ function switchMode(m: "scenario" | "sandbox"): void {
 }
 
 // ---------- Инициализация ----------
+elEye.addEventListener("click", () => {
+  eyeHidden = !eyeHidden;
+  elEye.textContent = eyeHidden ? "🙈" : "👁";
+  renderBoard();
+});
+
 document.querySelectorAll(".tab").forEach((t) => {
   t.addEventListener("click", () =>
     switchMode(t.getAttribute("data-tab") as "scenario" | "sandbox"),
