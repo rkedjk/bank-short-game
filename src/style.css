@@ -173,32 +173,6 @@ main {
 }
 
 /* ---------- Селектор валютных пар ---------- */
-.board-top {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 14px;
-}
-.board-top .pair-select {
-  flex: 1;
-  margin-bottom: 0;
-}
-.eye-btn {
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid var(--tds-border);
-  background: var(--tds-bg);
-  color: var(--tds-text);
-  font-size: 18px;
-  cursor: pointer;
-  transition: 0.15s;
-}
-.eye-btn:hover {
-  border-color: var(--tds-black);
-  background: var(--tds-yellow-soft);
-}
 .pair-select {
   display: flex;
   flex-wrap: wrap;
@@ -675,7 +649,9 @@ input[type="range"]:disabled {
   border: 1px solid var(--tds-border);
   box-shadow: var(--shadow-pop);
   opacity: 0;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
   pointer-events: none;
 }
 .toast.show {

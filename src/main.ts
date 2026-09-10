@@ -247,7 +247,6 @@ interface LogEntry {
   icon: string;
 }
 const sandboxLog: LogEntry[] = [];
-let eyeHidden = false;
 
 // ---------- DOM ----------
 const elPairSelect = $("pair-select");
@@ -277,7 +276,6 @@ const elQuizQuestions = $("quiz-questions");
 const elSbHint = $("sb-hint");
 const elSbLog = $("sb-log");
 const elThemeToggle = $("theme-toggle");
-const elEye = $("eye");
 
 // ---------- DOM-хелперы (без innerHTML) ----------
 function el<K extends keyof HTMLElementTagNameMap>(
@@ -437,12 +435,11 @@ function renderBoard(): void {
       "Пока нет открытой позиции — двигай курс и открывай сделки";
   }
 
-  // Ящики (с поддержкой «глаза» — скрытие сумм)
-  const mask = (v: string): string => (eyeHidden ? "•••" : v);
+  // Ящики
   elVaultBaseLabel.textContent = `${s.baseEmoji} ${baseName} у банка`;
   elVaultQuoteLabel.textContent = `${s.quoteEmoji} ${CURRENCY_NAMES[s.quote] ?? s.quote} у банка`;
 
-  elVaultBase.textContent = mask(fmt(g.base));
+  elVaultBase.textContent = fmt(g.base);
   elVaultBase.className = `vault-amount${g.base < 0 ? " debt" : ""}`;
   if (g.pos.side === "short") {
     elVaultBaseNote.textContent = `⚠️ банк ДОЛЖЕН клиенту ${fmt(s.amount)} ${s.base}`;
@@ -452,7 +449,7 @@ function renderBoard(): void {
     elVaultBaseNote.textContent = "свои";
   }
 
-  elVaultQuote.textContent = mask(fmt(g.quote));
+  elVaultQuote.textContent = fmt(g.quote);
   elVaultQuote.className = `vault-amount${g.quote < 0 ? " debt" : ""}`;
   elVaultQuoteNote.textContent = g.lastClose
     ? `последняя сделка: ${g.lastClose.text}`
@@ -480,9 +477,7 @@ function renderBoard(): void {
 
   // PnL
   const pnl = g.pos.side ? openPnl(g) : (g.lastClose?.pnl ?? 0);
-  elPnl.textContent = eyeHidden
-    ? "Прибыль/убыток: •••"
-    : `Прибыль/убыток: ${money(pnl, s.quoteSym)}`;
+  elPnl.textContent = `Прибыль/убыток: ${money(pnl, s.quoteSym)}`;
   elPnl.className = `pnl ${pnl > 0 ? "up" : pnl < 0 ? "down" : "flat"}`;
   elPnl.classList.add("flash");
   setTimeout(() => elPnl.classList.remove("flash"), 500);
@@ -897,11 +892,14 @@ function initSandbox(): void {
         text: `${pnl < 0 ? "убыток" : "прибыль"} ${fmt(Math.abs(pnl))} ${cur().quote}`,
       };
       flashSwap();
-      logEntry(`Закрытие ${side === "short" ? "шорта" : "лонга"} @ ${fmtRate(rate, cur().digits)}`, {
-        icon: "✓",
-        cls: pnl >= 0 ? "up" : "down",
-        amount: `${pnl >= 0 ? "+" : "−"}${money(Math.abs(pnl), cur().quoteSym)}`,
-      });
+      logEntry(
+        `Закрытие ${side === "short" ? "шорта" : "лонга"} @ ${fmtRate(rate, cur().digits)}`,
+        {
+          icon: "✓",
+          cls: pnl >= 0 ? "up" : "down",
+          amount: `${pnl >= 0 ? "+" : "−"}${money(Math.abs(pnl), cur().quoteSym)}`,
+        },
+      );
       toast(
         `Операция выполнена · ${pnl < 0 ? "убыток" : "прибыль"} ${money(Math.abs(pnl), cur().quoteSym)}`,
         pnl >= 0 ? "ok" : "err",
@@ -955,12 +953,6 @@ function switchMode(m: "scenario" | "sandbox"): void {
 }
 
 // ---------- Инициализация ----------
-elEye.addEventListener("click", () => {
-  eyeHidden = !eyeHidden;
-  elEye.textContent = eyeHidden ? "🙈" : "👁";
-  renderBoard();
-});
-
 document.querySelectorAll(".tab").forEach((t) => {
   t.addEventListener("click", () =>
     switchMode(t.getAttribute("data-tab") as "scenario" | "sandbox"),
